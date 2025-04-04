@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pronunciation Checker</title>
-    <script src="script.js" defer></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  </head>
-  <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-xl w-full space-y-6">
-      <h1 class="text-3xl font-bold text-center text-gray-800">AI Pronunciation Checker</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pronunciation Analyzer</title>
+  <script src="script.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @keyframes gradient-x {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
 
-      <div>
-        <label for="expected-text" class="block mb-2 font-semibold text-gray-700">Expected Sentence</label>
-        <textarea id="expected-text" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type the sentence to pronounce..."></textarea>
-      </div>
+    .bg-animated {
+      background: linear-gradient(270deg, #3b82f6, #8b5cf6, #ec4899);
+      background-size: 200% 200%;
+      animation: gradient-x 10s ease infinite;
+    }
+  </style>
+</head>
+<body class="bg-animated min-h-screen text-white flex items-center justify-center p-6">
 
-      <div class="flex gap-4 justify-center">
-        <button id="record-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200">
+  <div class="bg-indigo-900 rounded-2xl shadow-xl p-8 w-full max-w-xl space-y-6">
+    <h1 class="text-3xl font-bold text-center text-white">🎙️ Pronunciation Analyzer</h1>
+
+    <div class="space-y-4">
+      <input 
+        id="expected-text" 
+        type="text" 
+        placeholder="Enter expected text..." 
+        class="w-full p-3 rounded-xl bg-indigo-800 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400" 
+      />
+
+      <div class="flex justify-center space-x-4">
+        <button 
+          id="record-btn" 
+          class="bg-pink-500 hover:bg-pink-600 transition px-6 py-2 rounded-full text-white font-semibold">
           🎤 Record
         </button>
-        <button id="submit-btn" disabled class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 disabled:opacity-50">
-          🔍 Analyze
+        <button 
+          id="submit-btn" 
+          disabled 
+          class="bg-purple-500 hover:bg-purple-600 transition px-6 py-2 rounded-full text-white font-semibold">
+          🚀 Submit
         </button>
       </div>
 
-      <div id="status" class="text-center text-sm text-gray-600">Click "Record" to begin</div>
+      <div 
+        id="status" 
+        class="text-center text-sm mt-4 italic text-gray-200">
+        Awaiting input...
+      </div>
 
-      <div id="results" class="bg-gray-50 p-4 rounded-lg hidden">
-        <p class="text-sm text-gray-600"><strong>Transcription:</strong> <span id="transcription" class="text-gray-800"></span></p>
-        <p class="text-sm text-gray-600"><strong>Score:</strong> <span id="score" class="text-green-600 font-bold"></span></p>
-        <p class="text-sm text-gray-600"><strong>Feedback:</strong> <span id="feedback" class="text-red-500"></span></p>
+      <div id="results" class="mt-6 space-y-2 text-sm text-gray-100">
+        <p><strong>Transcription:</strong> <span id="transcription">-</span></p>
+        <p><strong>Score:</strong> <span id="score">-</span></p>
+        <p><strong>Feedback:</strong> <span id="feedback">-</span></p>
       </div>
     </div>
-  </body>
+  </div>
+
+</body>
 </html>

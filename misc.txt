@@ -1,0 +1,29 @@
+fastapi
+uvicorn
+transformers
+torchaudio
+phonemizer
+torch
+python-multipart
+
+fastapi==0.110.0
+uvicorn==0.29.0
+torch==2.2.1+cpu
+torchaudio==2.2.1+cpu
+transformers==4.39.3
+librosa==0.10.1
+numpy==1.24.4
+scipy==1.10.1
+python-multipart==0.0.9
+
+pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
+
+Notes:
+
+    phonemizer requires espeak to be installed on your system (sudo apt install espeak for Ubuntu).
+
+    ffmpeg should also be installed system-wide for pydub to work (sudo apt install ffmpeg).
+
+    This list assumes Python 3.10 or 3.11 (you may want to match with your current Python version).
+
+    All packages are compatible with NumPy 2.x if you're using it, otherwise downgrade NumPy to <2.0 if any compatibility issues arise.

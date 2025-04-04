@@ -4,36 +4,27 @@ let audioChunks = [];
 const recordBtn = document.getElementById("record-btn");
 const submitBtn = document.getElementById("submit-btn");
 const statusText = document.getElementById("status");
-const resultsBox = document.getElementById("results");
+
 const transcriptionEl = document.getElementById("transcription");
 const scoreEl = document.getElementById("score");
 const feedbackEl = document.getElementById("feedback");
 
-// Handle recording
 recordBtn.onclick = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+  audioChunks = [];
 
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      submitBtn.disabled = false;
-      statusText.textContent = "✅ Recording complete. Ready to analyze.";
-    };
+  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+  mediaRecorder.onstop = () => {
+    submitBtn.disabled = false;
+    statusText.textContent = "🎧 Recording complete. Ready to submit.";
+  };
 
-    mediaRecorder.start();
-    statusText.textContent = "🎙️ Recording...";
-
-    // Automatically stop after 3 seconds
-    setTimeout(() => mediaRecorder.stop(), 3000);
-  } catch (err) {
-    statusText.textContent = "❌ Microphone access denied.";
-    console.error(err);
-  }
+  mediaRecorder.start();
+  statusText.textContent = "🎙️ Recording... Speak now!";
+  setTimeout(() => mediaRecorder.stop(), 3000);
 };
 
-// Handle submission
 submitBtn.onclick = async () => {
   const expectedText = document.getElementById("expected-text").value.trim();
   if (!expectedText) {
@@ -60,11 +51,10 @@ submitBtn.onclick = async () => {
     }
 
     const result = await response.json();
-    transcriptionEl.textContent = result.transcription;
-    scoreEl.textContent = `${result.score}%`;
-    feedbackEl.textContent = result.feedback.length > 0 ? result.feedback.join(", ") : "✅ Great job!";
+    transcriptionEl.textContent = result.transcription || "N/A";
+    scoreEl.textContent = result.score !== undefined ? `${result.score}%` : "N/A";
+    feedbackEl.textContent = result.feedback?.length ? result.feedback.join(", ") : "✅ Great job!";
 
-    resultsBox.classList.remove("hidden");
     statusText.textContent = "✅ Analysis complete!";
   } catch (err) {
     console.error(err);
