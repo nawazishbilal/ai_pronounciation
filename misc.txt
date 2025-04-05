@@ -16,6 +16,7 @@ numpy==1.24.4
 scipy==1.10.1
 python-multipart==0.0.9
 
+```bash
 pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 
 Notes:
@@ -27,3 +28,7 @@ Notes:
     This list assumes Python 3.10 or 3.11 (you may want to match with your current Python version).
 
     All packages are compatible with NumPy 2.x if you're using it, otherwise downgrade NumPy to <2.0 if any compatibility issues arise.
+
+run on terminal using:- 
+```bash
+uvicorn app.main:app --reload
