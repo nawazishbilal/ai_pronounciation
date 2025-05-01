@@ -44,13 +44,16 @@ Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
 
 For Windows/Ubuntu install espeak as follows:
 
 ```bash
 sudo apt install espeak
+```
 
 For Mac (Homebrew): 
 
 ```bash
 brew install espeak
+```
