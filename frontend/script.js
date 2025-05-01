@@ -1,5 +1,6 @@
 let mediaRecorder;
 let audioChunks = [];
+let recordedBlob = null;
 
 const recordBtn = document.getElementById("record-btn");
 const submitBtn = document.getElementById("submit-btn");
@@ -16,6 +17,11 @@ recordBtn.onclick = async () => {
 
   mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
   mediaRecorder.onstop = () => {
+    recordedBlob = new Blob(audioChunks, { type: "audio/wav" });
+    const audioUrl = URL.createObjectURL(recordedBlob);
+    playback.src = audioUrl;
+    playback.classList.remove("hidden");
+
     submitBtn.disabled = false;
     statusText.textContent = "🎧 Recording complete. Ready to submit.";
   };
@@ -32,10 +38,11 @@ submitBtn.onclick = async () => {
     return;
   }
 
-  const blob = new Blob(audioChunks, { type: "audio/wav" });
+  // const blob = new Blob(audioChunks, { type: "audio/wav" });
   const formData = new FormData();
+  formData.append("audio", recordedBlob, "audio.wav");
   formData.append("expected_text", expectedText);
-  formData.append("audio", blob, "audio.wav");
+  // formData.append("audio", blob, "audio.wav");
 
   submitBtn.disabled = true;
   statusText.textContent = "⏳ Analyzing... Please wait...";

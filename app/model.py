@@ -17,6 +17,17 @@ model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h")
 model.to(device)
 model.eval()
 
+IPA_TO_PLAIN = {
+    "oʊ": "oh", "əʊ": "oh", "aɪ": "eye", "aʊ": "ow", "eɪ": "ay", "ɔɪ": "oy",
+    "ɪ": "ih", "iː": "ee", "i": "ee", "ʊ": "oo", "uː": "oo", "u": "oo",
+    "e": "eh", "ɛ": "eh", "æ": "a", "ɑː": "ah", "ɑ": "ah", "ʌ": "uh", "ə": "uh",
+    "ɜː": "er", "ɚ": "er", "ɝ": "er", "ʃ": "sh", "ʒ": "zh", "tʃ": "ch", "dʒ": "j",
+    "ŋ": "ng", "θ": "th", "ð": "th", "h": "h", "b": "b", "p": "p", "d": "d",
+    "t": "t", "g": "g", "k": "k", "z": "z", "s": "s", "v": "v", "f": "f",
+    "m": "m", "n": "n", "l": "l", "r": "r", "w": "w", "j": "y", "ɹ": "r",
+    "ː": "", "ˈ": "", "ˌ": "", "ʔ": "", " ": " "
+}
+
 def transcribe(audio_tensor, sample_rate):
     if sample_rate != 16000:
         resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)
@@ -36,11 +47,23 @@ def clean_text(text):
     return re.sub(r'[^\w\s]', '', text.lower())
 
 def phonemize_text(text):
-    return phonemize(text, language="en-us", backend="espeak", strip=True, preserve_punctuation=True)
+    phonemes = phonemize(
+        text,
+        language="en-us",
+        backend="espeak",  # or "segments"
+        strip=True,
+        preserve_punctuation=True,
+        njobs=1  # avoid issues on Render/Codespaces
+    )
+    print(f"[PHONEMIZE] Input: {text} → Output: {phonemes}") #debugging line
+    return phonemes
 
 def compare_phonemes(expected, actual):
     expected_seq = phonemize_text(clean_text(expected)).split()
     actual_seq = phonemize_text(clean_text(actual)).split()
+
+    print(f"[COMPARE] Expected Phonemes: {expected_seq}")
+    print(f"[COMPARE] Actual Phonemes:   {actual_seq}")
 
     if not actual_seq:
         return 0, ["No transcription received."]
@@ -53,7 +76,10 @@ def compare_phonemes(expected, actual):
     feedback = []
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag != 'equal':
-            feedback.append(f"Expected: {' '.join(expected_seq[i1:i2])}, Got: {' '.join(actual_seq[j1:j2])}")
+            expected_readable = readable_phonemes(' '.join(expected_seq[i1:i2]))
+            actual_readable = readable_phonemes(' '.join(actual_seq[j1:j2]))
+            feedback.append(f"Expected: {expected_readable}, Got: {actual_readable}")
+
 
     return score, feedback
 
@@ -84,3 +110,9 @@ def convert_to_wav(upload_file):
     audio.export(buffer, format="wav")
     buffer.seek(0)
     return buffer
+
+def readable_phonemes(ipa_string):
+    # Sort by descending key length to prioritize multi-char symbols (like "oʊ" before "o")
+    for ipa, plain in sorted(IPA_TO_PLAIN.items(), key=lambda x: -len(x[0])):
+        ipa_string = ipa_string.replace(ipa, plain)
+    return ipa_string
