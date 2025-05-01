@@ -41,7 +41,7 @@ submitBtn.onclick = async () => {
   statusText.textContent = "⏳ Analyzing... Please wait...";
 
   try {
-    const response = await fetch("https://effective-bassoon-97j55pxrvqx9fxxvq-8000.app.github.dev/analyze/", {
+    const response = await fetch("https://literate-fortnight-v6qrrx594q5p26p7g-8000.app.github.dev/analyze/", {
       method: "POST",
       body: formData,
     });
