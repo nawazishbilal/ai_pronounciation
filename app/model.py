@@ -4,10 +4,8 @@ from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 import re
 from phonemizer import phonemize
 from pydub import AudioSegment
-import io
-import difflib
-import wave
-import tempfile
+import io, difflib, tempfile
+import pyttsx3
 
 device = torch.device("cpu")  # Force CPU use
 
@@ -116,3 +114,10 @@ def readable_phonemes(ipa_string):
     for ipa, plain in sorted(IPA_TO_PLAIN.items(), key=lambda x: -len(x[0])):
         ipa_string = ipa_string.replace(ipa, plain)
     return ipa_string
+def generate_tts_audio(text):
+    engine = pyttsx3.init()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+        engine.save_to_file(text, tmp.name)
+        engine.runAndWait()
+        return tmp.name
+    
