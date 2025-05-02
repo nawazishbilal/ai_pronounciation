@@ -41,19 +41,32 @@ submitBtn.onclick = async () => {
   statusText.textContent = "⏳ Analyzing... Please wait...";
 
   try {
-    const response = await fetch("https://effective-bassoon-97j55pxrvqx9fxxvq-8000.app.github.dev/analyze/", {
+    // 1. Analyze
+    const response = await fetch("https://crispy-sniffle-r444g7754v9xcxw9p-8000.app.github.dev/analyze/", {
       method: "POST",
       body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const result = await response.json();
-    transcriptionEl.textContent = result.transcription || "N/A";
-    scoreEl.textContent = result.score !== undefined ? `${result.score}%` : "N/A";
-    feedbackEl.textContent = result.feedback?.length ? result.feedback.join(", ") : "✅ Great job!";
+
+    // 2. Extract and display feedback
+    const transcription = result.transcription || "N/A";
+    const score = result.score !== undefined ? `${result.score}%` : "N/A";
+    const feedbackText = Array.isArray(result.feedback)
+      ? result.feedback.join(", ")
+      : result.feedback || "✅ Great job!";
+
+    transcriptionEl.textContent = transcription;
+    scoreEl.textContent = score;
+    feedbackEl.textContent = feedbackText;
+
+    // 3. Fetch audio feedback
+    const ttsResponse = await fetch(`https://crispy-sniffle-r444g7754v9xcxw9p-8000.app.github.dev/tts/?text=${encodeURIComponent(feedbackText)}`);
+    const ttsBlob = await ttsResponse.blob();
+    const audioUrl = URL.createObjectURL(ttsBlob);
+    new Audio(audioUrl).play();
 
     statusText.textContent = "✅ Analysis complete!";
   } catch (err) {
