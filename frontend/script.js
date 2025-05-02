@@ -1,5 +1,6 @@
 let mediaRecorder;
 let audioChunks = [];
+let recordedBlob = null;
 
 const recordBtn = document.getElementById("record-btn");
 const submitBtn = document.getElementById("submit-btn");
@@ -16,6 +17,11 @@ recordBtn.onclick = async () => {
 
   mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
   mediaRecorder.onstop = () => {
+    recordedBlob = new Blob(audioChunks, { type: "audio/wav" });
+    const audioUrl = URL.createObjectURL(recordedBlob);
+    playback.src = audioUrl;
+    playback.classList.remove("hidden");
+
     submitBtn.disabled = false;
     statusText.textContent = "🎧 Recording complete. Ready to submit.";
   };
@@ -32,17 +38,17 @@ submitBtn.onclick = async () => {
     return;
   }
 
-  const blob = new Blob(audioChunks, { type: "audio/wav" });
+  // const blob = new Blob(audioChunks, { type: "audio/wav" });
   const formData = new FormData();
+  formData.append("audio", recordedBlob, "audio.wav");
   formData.append("expected_text", expectedText);
-  formData.append("audio", blob, "audio.wav");
+  // formData.append("audio", blob, "audio.wav");
 
   submitBtn.disabled = true;
   statusText.textContent = "⏳ Analyzing... Please wait...";
 
   try {
-    // 1. Analyze
-    const response = await fetch("https://crispy-sniffle-r444g7754v9xcxw9p-8000.app.github.dev/analyze/", {
+    const response = await fetch("https://literate-fortnight-v6qrrx594q5p26p7g-8000.app.github.dev/analyze/", {
       method: "POST",
       body: formData,
     });

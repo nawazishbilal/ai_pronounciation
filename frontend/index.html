@@ -42,6 +42,7 @@
           class="bg-pink-500 hover:bg-pink-600 transition px-6 py-2 rounded-full text-white font-semibold">
           🎤 Record
         </button>
+        
         <button 
           id="submit-btn" 
           disabled 
@@ -56,6 +57,8 @@
         Awaiting input...
       </div>
 
+      <audio id="playback" controls class="w-full mt-4 hidden"></audio>
+      
       <div id="results" class="mt-6 space-y-2 text-sm text-gray-100">
         <p><strong>Transcription:</strong> <span id="transcription">-</span></p>
         <p><strong>Score:</strong> <span id="score">-</span></p>

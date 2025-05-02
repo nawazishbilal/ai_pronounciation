@@ -44,3 +44,19 @@ Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+In Windows, install eSpeak from the internet.
+
+For Ubuntu first check for updates, then install espeak as follows:
+
+```bash
+sudo apt update
+sudo apt install espeak
+```
+
+For Mac (Homebrew): 
+
+```bash
+brew install espeak
+```
